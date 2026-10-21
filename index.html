@@ -7,314 +7,205 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="冠軍晨間習慣" />
   <meta name="theme-color" content="#020617" />
-  <title>冠軍的晨間習慣 — 每日啟動程序</title>
+  <title>冠軍的晨間習慣</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap');
     body {
-      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
     .ring-transition {
-      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+      transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
+    }
+    .neon-emerald {
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    }
+    .neon-sky {
+      box-shadow: 0 0 25px rgba(14, 165, 233, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    }
+    .neon-amber {
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased min-h-screen selection:bg-emerald-500/30 selection:text-emerald-200 pb-12">
-  <!-- Subtle Ambient Glow -->
+<body class="bg-slate-950 text-white antialiased min-h-screen pb-14 selection:bg-emerald-500/30">
+  <!-- Tech Ambient Glow -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    <div class="absolute -top-28 left-1/4 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl"></div>
-    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-28 left-1/3 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl"></div>
+    <div id="glow-bg" class="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl transition-colors duration-500"></div>
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl"></div>
   </div>
 
-  <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-    <!-- Top Header -->
-    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-5 border-b border-slate-800/80">
+  <!-- Mobile-First Single Column Container -->
+  <div class="relative z-10 max-w-md mx-auto px-4 pt-5 space-y-5">
+
+    <!-- 1. Compact Header + Streak -->
+    <header class="flex items-center justify-between bg-slate-900/90 border border-slate-800 rounded-2xl px-4 py-3 shadow-lg">
       <div>
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-emerald-400 mb-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>CHAMPION MORNING PROTOCOL · 30 MINS</span>
-        </div>
-        <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight text-white leading-snug">
-          冠軍的晨間習慣，<span class="bg-gradient-to-r from-emerald-400 via-sky-400 to-amber-400 bg-clip-text text-transparent">決定了事業發展的高度與紀律</span>
-        </h1>
+        <div class="text-[11px] font-bold tracking-widest text-emerald-400 uppercase">CHAMPION MORNING</div>
+        <h1 class="text-lg font-black tracking-tight text-white">冠軍的晨間習慣</h1>
       </div>
-
-      <!-- Streak & Date Pill -->
-      <div class="flex items-center gap-3 self-start md:self-auto">
-        <div class="bg-slate-900/90 border border-slate-800 rounded-xl px-3.5 py-2 flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-base">
-            🔥
-          </div>
-          <div>
-            <div class="text-[11px] uppercase tracking-wider text-slate-400">連續啟動天數</div>
-            <div class="text-base font-bold text-white leading-tight"><span id="streak-count">0</span> 天</div>
-          </div>
-        </div>
-
-        <div class="bg-slate-900/90 border border-slate-800 rounded-xl px-3.5 py-2">
-          <div class="text-[11px] uppercase tracking-wider text-slate-400">今日日期</div>
-          <div id="today-date" class="text-sm font-semibold text-slate-200 leading-tight mt-0.5">--</div>
+      <div class="flex items-center gap-2 bg-slate-950 border border-amber-500/40 rounded-xl px-3 py-1.5">
+        <span class="text-lg">🔥</span>
+        <div>
+          <div class="text-[10px] text-slate-400 font-bold leading-none">連續啟動</div>
+          <div class="text-sm font-black text-amber-400 leading-tight"><span id="streak-count">0</span> 天</div>
         </div>
       </div>
     </header>
 
-    <!-- 3 Pillar Overview Stepper -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 my-5">
-      <!-- Step 1: Mind -->
-      <button onclick="switchPhase('mind')" id="tab-mind" class="group text-left p-4 rounded-2xl border transition-all duration-200 bg-slate-900/90 border-emerald-500/50 shadow-lg shadow-emerald-950/30">
-        <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-            STEP 1 · 10 分鐘
-          </span>
-          <span id="badge-mind" class="text-xs text-slate-400 font-medium">未完成</span>
-        </div>
-        <div class="text-base font-bold text-white flex items-center gap-2 mt-1">
-          <span>🧘 餵養心靈 (Mind)</span>
-        </div>
-        <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-          透過閱讀、冥想或音頻，進行個人心智成長。
-        </p>
-      </button>
-
-      <!-- Step 2: Body -->
-      <button onclick="switchPhase('body')" id="tab-body" class="group text-left p-4 rounded-2xl border transition-all duration-200 bg-slate-900/50 border-slate-800/80 hover:border-sky-500/40">
-        <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30">
-            STEP 2 · 10 分鐘
-          </span>
-          <span id="badge-body" class="text-xs text-slate-400 font-medium">未完成</span>
-        </div>
-        <div class="text-base font-bold text-white flex items-center gap-2 mt-1">
-          <span>⚡ 喚醒身體 (Body)</span>
-        </div>
-        <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-          透過伸展或肌力訓練，產生一整天所需的高能量。
-        </p>
-      </button>
-
-      <!-- Step 3: Top 5 Tasks -->
-      <button onclick="switchPhase('tasks')" id="tab-tasks" class="group text-left p-4 rounded-2xl border transition-all duration-200 bg-slate-900/50 border-slate-800/80 hover:border-amber-500/40">
-        <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
-            STEP 3 · 10 分鐘
-          </span>
-          <span id="badge-tasks" class="text-xs text-slate-400 font-medium">0 / 5 完成</span>
-        </div>
-        <div class="text-base font-bold text-white flex items-center gap-2 mt-1">
-          <span>🎯 設定每日 Top 5 任務</span>
-        </div>
-        <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-          寫下必須完成的 5 件高價值產出事項，並將最重要的一件事排在首位。
-        </p>
-      </button>
-    </div>
-
-    <!-- Main Workspace Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      <!-- Left Column: Interactive 3-Sector Clock & Timer (5 cols) -->
-      <div class="lg:col-span-5 bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col items-center">
-        <div class="w-full flex items-center justify-between mb-3">
-          <span id="current-phase-tag" class="text-xs font-semibold uppercase tracking-wider text-emerald-400">
-            PHASE 01 · MIND
-          </span>
-          <div class="flex items-center gap-1.5">
-            <button onclick="adjustTimer(-60)" title="減少 1 分鐘" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">-1m</button>
-            <button onclick="adjustTimer(60)" title="增加 1 分鐘" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">+1m</button>
-          </div>
-        </div>
-
-        <h2 id="timer-title" class="text-xl font-bold text-white text-center">10 分鐘：餵養心靈 (Mind)</h2>
-        <p id="timer-subtitle" class="text-xs text-slate-400 text-center mt-1 max-w-xs">
-          透過閱讀、冥想或音頻，進行個人心智成長。
-        </p>
-
-        <!-- Circular Progress Dial -->
-        <div class="relative my-5 w-52 h-52 sm:w-56 sm:h-56 flex items-center justify-center">
-          <svg class="w-full h-full -rotate-90" viewBox="0 0 220 220">
-            <circle cx="110" cy="110" r="94" fill="none" stroke="#1e293b" stroke-width="12" />
-            <circle cx="110" cy="110" r="80" fill="none" stroke="#0f172a" stroke-width="2" stroke-dasharray="4 8" />
-            <circle
-              id="timer-ring"
-              class="ring-transition"
-              cx="110"
-              cy="110"
-              r="94"
-              fill="none"
-              stroke="#10b981"
-              stroke-width="12"
-              stroke-linecap="round"
-              stroke-dasharray="590.6"
-              stroke-dashoffset="0"
-            />
-          </svg>
-          <div class="absolute inset-0 flex flex-col items-center justify-center">
-            <span id="timer-display" class="text-5xl font-extrabold tracking-tight text-white tabular-nums">10:00</span>
-            <span id="timer-status-text" class="text-xs text-slate-400 mt-1.5 font-medium">準備開始專注</span>
-          </div>
-        </div>
-
-        <!-- Activity Quick Presets -->
-        <div class="w-full mb-5">
-          <div class="text-xs text-slate-400 mb-2 font-medium">選擇今日執行方式（點擊記錄）：</div>
-          <div id="phase-presets" class="flex flex-wrap gap-2"></div>
-        </div>
-
-        <!-- Timer Action Controls -->
-        <div class="w-full grid grid-cols-3 gap-2.5">
-          <button
-            id="btn-start-pause"
-            onclick="toggleTimer()"
-            class="col-span-2 py-3 px-4 rounded-xl font-bold text-sm bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2"
-          >
-            <span id="btn-start-icon">▶</span>
-            <span id="btn-start-label">開始 10 分鐘計時</span>
-          </button>
-          <button
-            onclick="resetTimer()"
-            class="py-3 px-3 rounded-xl font-semibold text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
-          >
-            重置
-          </button>
-        </div>
-
+    <!-- 2. Super-Prominent 10-Minute Timer Card -->
+    <section class="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center">
+      
+      <!-- 2 Big Mode Switch Buttons (Mind vs Body) -->
+      <div class="w-full grid grid-cols-2 gap-2.5 mb-5">
         <button
-          onclick="completeCurrentPhase()"
-          id="btn-mark-done"
-          class="w-full mt-2.5 py-2.5 px-4 rounded-xl font-semibold text-xs border border-slate-700 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-slate-300 hover:text-emerald-300 transition"
+          id="tab-mind"
+          onclick="switchPhase('mind')"
+          class="py-3 px-3 rounded-2xl font-black text-sm border-2 transition-all flex flex-col items-center justify-center gap-0.5"
         >
-          ✓ 直接標記此階段已完成並進入下一步
+          <div class="flex items-center gap-1.5">
+            <span>🧘 10m 餵養心靈</span>
+            <span id="check-mind" class="hidden text-xs">✅</span>
+          </div>
+          <span class="text-[11px] font-medium opacity-80">閱讀 · 冥想 · 音頻</span>
         </button>
 
-        <!-- Mind / Body Reflection Note -->
-        <div class="w-full mt-5 pt-4 border-t border-slate-800/80">
-          <label for="morning-note" class="block text-xs font-semibold text-slate-300 mb-1.5">
-            💡 晨間心靈金句 / 啟發筆記
-          </label>
-          <input
-            id="morning-note"
-            type="text"
-            oninput="saveState()"
-            placeholder="寫下今天閱讀或冥想得到的 1 個核心啟發..."
-            class="w-full bg-slate-950/90 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500/60"
+        <button
+          id="tab-body"
+          onclick="switchPhase('body')"
+          class="py-3 px-3 rounded-2xl font-black text-sm border-2 transition-all flex flex-col items-center justify-center gap-0.5"
+        >
+          <div class="flex items-center gap-1.5">
+            <span>⚡ 10m 喚醒身體</span>
+            <span id="check-body" class="hidden text-xs">✅</span>
+          </div>
+          <span class="text-[11px] font-medium opacity-80">伸展 · 肌力 · 高能量</span>
+        </button>
+      </div>
+
+      <!-- Giant High-Contrast Countdown Dial -->
+      <div class="relative w-52 h-52 flex items-center justify-center my-1">
+        <svg class="w-full h-full -rotate-90" viewBox="0 0 220 220">
+          <circle cx="110" cy="110" r="94" fill="none" stroke="#1e293b" stroke-width="14" />
+          <circle
+            id="timer-ring"
+            class="ring-transition"
+            cx="110"
+            cy="110"
+            r="94"
+            fill="none"
+            stroke="#10b981"
+            stroke-width="14"
+            stroke-linecap="round"
+            stroke-dasharray="590.6"
+            stroke-dashoffset="0"
           />
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <span id="phase-label" class="text-xs font-extrabold uppercase tracking-widest text-emerald-400 mb-0.5">
+            STEP 1 · 餵養心靈
+          </span>
+          <span id="timer-display" class="text-6xl font-black tracking-tight text-white tabular-nums">
+            10:00
+          </span>
+          <span id="timer-status" class="text-xs font-bold text-slate-400 mt-1">
+            點擊下方按鈕開始
+          </span>
         </div>
       </div>
 
-      <!-- Right Column: Daily Top 5 High-Value Output Tasks (7 cols) -->
-      <div class="lg:col-span-7 bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                HIGH-VALUE OUTPUT
-              </span>
-              <h2 class="text-xl font-bold text-white">設定每日 Top 5 任務</h2>
-            </div>
-            <p class="text-xs text-slate-400 mt-1">
-              寫下必須完成的 5 件高價值產出事項，並將<strong class="text-amber-300 font-semibold">最重要的一件事排在首位 (#1 MIT)</strong>。
-            </p>
-          </div>
-          <button
-            onclick="clearCompletedOrResetTasks()"
-            class="self-start sm:self-auto text-xs text-slate-400 hover:text-slate-200 bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700/70 transition"
-          >
-            清空今日清單
-          </button>
-        </div>
+      <!-- GIANT GLOWING 10-MINUTE START BUTTON -->
+      <button
+        id="btn-main-timer"
+        onclick="toggleTimer()"
+        class="w-full mt-5 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-300 neon-emerald active:scale-[0.98] transition-all flex items-center justify-center gap-2.5"
+      >
+        <span id="btn-icon" class="text-xl">▶</span>
+        <span id="btn-label">啟動 10 分鐘倒數</span>
+      </button>
 
-        <!-- Top 5 Task Slots -->
-        <div id="tasks-container" class="space-y-3 my-5"></div>
-
-        <!-- Daily Completion Banner & Finish Action -->
-        <div class="mt-6 p-4 rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="space-y-1 text-center sm:text-left">
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">今日晨間啟動進度</div>
-            <div id="overall-progress-text" class="text-sm font-bold text-white">
-              已完成 0 / 3 個核心環節
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2.5 w-full sm:w-auto justify-center">
-            <button
-              onclick="exportDailySummary()"
-              class="px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
-            >
-              📋 複製今日宣言
-            </button>
-            <button
-              id="btn-finish-routine"
-              onclick="finishMorningRoutine()"
-              class="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-400 to-emerald-400 hover:from-amber-300 hover:to-emerald-300 text-slate-950 shadow-lg shadow-amber-500/10 transition"
-            >
-              🏆 完成今日晨間啟動打卡
-            </button>
-          </div>
-        </div>
-
-        <!-- Quote Footer Box -->
-        <div class="mt-5 p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-sky-500/10 to-amber-500/10 border border-slate-700/80 text-center">
-          <p class="text-sm sm:text-base font-bold text-slate-100 leading-relaxed">
-            「想擁有高標準的事業，必須先提升個人生活的標準。<br />
-            給我看你的每日習慣，我就能看出你是否具備冠軍相。」
-          </p>
-        </div>
+      <!-- Secondary Quick Actions -->
+      <div class="w-full flex items-center justify-between gap-2 mt-3">
+        <button
+          onclick="resetTimer()"
+          class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800/90 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition"
+        >
+          ↺ 重置 10:00
+        </button>
+        <button
+          onclick="completeCurrentPhase()"
+          class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800/90 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 transition"
+        >
+          ✓ 直接標記完成
+        </button>
       </div>
-    </div>
+    </section>
 
-    <!-- Recent Check-in History Log -->
-    <section class="mt-6 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-          <span>📅 近期冠軍晨間打卡紀錄（保存在您自己的手機/電腦中）</span>
-        </h3>
-        <span id="toast-msg" class="text-xs font-semibold text-emerald-400 opacity-0 transition-opacity duration-300">
-          ✓ 已自動儲存
+    <!-- 3. Daily Top 5 Tasks (Clear, Large Font, High Readability) -->
+    <section class="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-lg font-black text-white flex items-center gap-2">
+          <span>🎯 今日 Top 5 任務</span>
+        </h2>
+        <span id="tasks-counter" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+          0 / 5 完成
         </span>
       </div>
-      <div id="history-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 text-xs"></div>
+      <p class="text-xs text-slate-300 font-medium mb-4">
+        寫下 5 件高價值產出事項，並將<span class="text-amber-400 font-bold">最重要的一件事排在首位</span>。
+      </p>
+
+      <!-- 5 Task Inputs -->
+      <div id="tasks-container" class="space-y-2.5"></div>
+
+      <!-- Clear Tasks Link -->
+      <div class="mt-3 text-right">
+        <button onclick="resetTasks()" class="text-xs text-slate-400 hover:text-slate-200 underline">
+          清空重置今日任務
+        </button>
+      </div>
     </section>
+
+    <!-- 4. Big Finish & Share Actions -->
+    <section class="space-y-2.5">
+      <button
+        onclick="finishMorningRoutine()"
+        class="w-full py-4 px-6 rounded-2xl font-black text-base text-slate-950 bg-gradient-to-r from-amber-400 via-yellow-300 to-emerald-400 neon-amber active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+      >
+        <span>🏆 完成今日晨間啟動打卡</span>
+      </button>
+
+      <button
+        onclick="exportDailySummary()"
+        class="w-full py-3.5 px-5 rounded-2xl font-bold text-sm text-white bg-slate-900 border border-slate-700 hover:border-slate-500 active:scale-[0.99] transition flex items-center justify-center gap-2"
+      >
+        <span>📋 一鍵複製今日清單（貼到 LINE）</span>
+      </button>
+
+      <div id="toast-msg" class="text-center text-xs font-bold text-emerald-400 h-4 opacity-0 transition-opacity duration-300">
+        ✓ 已自動儲存
+      </div>
+    </section>
+
+    <!-- 5. Quote Footer -->
+    <footer class="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 text-center">
+      <p class="text-xs sm:text-sm font-bold text-slate-200 leading-relaxed">
+        「想擁有高標準的事業，必須先提升個人生活的標準。<br />
+        給我看你的每日習慣，我就能看出你是否具備冠軍相。」
+      </p>
+    </footer>
+
   </div>
 
   <script>
     const STORAGE_KEY = 'champion_morning_routine_v1';
-
-    const PHASE_CONFIG = {
-      mind: {
-        tag: 'PHASE 01 · MIND',
-        title: '10 分鐘：餵養心靈 (Mind)',
-        subtitle: '透過閱讀、冥想或音頻，進行個人心智成長。',
-        color: '#10b981',
-        btnClass: 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/20',
-        presets: ['📖 商業/成長閱讀', '🧘 正念呼吸冥想', '🎧 領導力音頻/Podcast', '✍️ 感恩與心態校準']
-      },
-      body: {
-        tag: 'PHASE 02 · BODY',
-        title: '10 分鐘：喚醒身體 (Body)',
-        subtitle: '透過伸展或肌力訓練，產生一整天所需的高能量。',
-        color: '#0ea5e9',
-        btnClass: 'bg-sky-500 hover:bg-sky-400 text-slate-950 shadow-sky-500/20',
-        presets: ['🤸 全身動態伸展', '💪 伏地挺身/深蹲核心', '🏃 原地超慢跑/開合跳', '☀️ 戶外快走曬太陽']
-      },
-      tasks: {
-        tag: 'PHASE 03 · TOP 5 OUTPUT',
-        title: '10 分鐘：設定每日 Top 5 任務',
-        subtitle: '寫下必須完成的 5 件高價值產出事項，並將最重要的一件事排在首位。',
-        color: '#f59e0b',
-        btnClass: 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/20',
-        presets: ['🎯 確認 #1 最高價值產出', '📅 預留無干擾專注時段', '🚫 排除低價值雜事', '🤝 關鍵客戶/夥伴推進']
-      }
-    };
-
     const RING_CIRCUMFERENCE = 2 * Math.PI * 94;
 
     let state = {
       date: getTodayStr(),
       currentPhase: 'mind',
-      phasesDone: { mind: false, body: false, tasks: false },
-      selectedPresets: { mind: '📖 商業/成長閱讀', body: '🤸 全身動態伸展', tasks: '🎯 確認 #1 最高價值產出' },
-      morningNote: '',
+      phasesDone: { mind: false, body: false },
       tasks: [
         { text: '', done: false },
         { text: '', done: false },
@@ -323,8 +214,7 @@
         { text: '', done: false }
       ],
       streak: 0,
-      lastCheckInDate: null,
-      history: []
+      lastCheckInDate: null
     };
 
     let timerSeconds = 600;
@@ -348,12 +238,9 @@
           const today = getTodayStr();
           state.streak = parsed.streak || 0;
           state.lastCheckInDate = parsed.lastCheckInDate || null;
-          state.history = Array.isArray(parsed.history) ? parsed.history : [];
 
           if (parsed.date === today) {
-            state.phasesDone = parsed.phasesDone || { mind: false, body: false, tasks: false };
-            state.selectedPresets = parsed.selectedPresets || state.selectedPresets;
-            state.morningNote = parsed.morningNote || '';
+            state.phasesDone = parsed.phasesDone || { mind: false, body: false };
             if (Array.isArray(parsed.tasks) && parsed.tasks.length === 5) {
               state.tasks = parsed.tasks;
             }
@@ -362,13 +249,11 @@
       } catch (e) {}
     }
 
-    function saveState(showFeedback = true) {
+    function saveState(msg = '✓ 已自動儲存') {
       try {
-        const noteEl = document.getElementById('morning-note');
-        if (noteEl) state.morningNote = noteEl.value;
         state.date = getTodayStr();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        if (showFeedback) showToast('✓ 已自動儲存');
+        if (msg) showToast(msg);
       } catch (e) {}
     }
 
@@ -382,19 +267,18 @@
       window._toastTimer = setTimeout(() => {
         toast.classList.remove('opacity-100');
         toast.classList.add('opacity-0');
-      }, 1800);
+      }, 2000);
     }
 
     function playChime() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = [523.25, 659.25, 783.99, 1046.5];
-        notes.forEach((freq, idx) => {
+        [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'sine';
           osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.14);
-          gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.14);
+          gain.gain.setValueAtTime(0.18, ctx.currentTime + idx * 0.14);
           gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.14 + 0.5);
           osc.connect(gain);
           gain.connect(ctx.destination);
@@ -412,32 +296,6 @@
       renderAll();
     }
 
-    function updateTimerUI() {
-      const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
-      const secs = String(timerSeconds % 60).padStart(2, '0');
-      document.getElementById('timer-display').textContent = `${mins}:${secs}`;
-
-      const ring = document.getElementById('timer-ring');
-      const progress = timerTotal > 0 ? (timerTotal - timerSeconds) / timerTotal : 0;
-      const offset = RING_CIRCUMFERENCE * (1 - progress);
-      ring.style.strokeDashoffset = offset;
-      ring.style.stroke = PHASE_CONFIG[state.currentPhase].color;
-
-      const label = document.getElementById('btn-start-label');
-      const icon = document.getElementById('btn-start-icon');
-      const statusText = document.getElementById('timer-status-text');
-
-      if (isRunning) {
-        icon.textContent = '⏸';
-        label.textContent = '暫停計時';
-        statusText.textContent = '專注執行中...';
-      } else {
-        icon.textContent = '▶';
-        label.textContent = timerSeconds < timerTotal ? '繼續計時' : '開始 10 分鐘計時';
-        statusText.textContent = state.phasesDone[state.currentPhase] ? '✓ 此階段已完成' : '準備開始專注';
-      }
-    }
-
     function toggleTimer() {
       if (isRunning) {
         pauseTimer();
@@ -449,8 +307,6 @@
             timerSeconds--;
             updateTimerUI();
           } else {
-            pauseTimer();
-            playChime();
             completeCurrentPhase();
           }
         }, 1000);
@@ -473,131 +329,77 @@
       updateTimerUI();
     }
 
-    function adjustTimer(deltaSeconds) {
-      timerSeconds = Math.max(60, Math.min(3600, timerSeconds + deltaSeconds));
-      timerTotal = Math.max(timerTotal, timerSeconds);
-      updateTimerUI();
-    }
-
     function completeCurrentPhase() {
       pauseTimer();
       state.phasesDone[state.currentPhase] = true;
       playChime();
-      saveState();
+      saveState('🎉 完成 10 分鐘專注！');
 
       if (state.currentPhase === 'mind' && !state.phasesDone.body) {
         switchPhase('body');
-      } else if (state.currentPhase === 'body' && !state.phasesDone.tasks) {
-        switchPhase('tasks');
       } else {
         renderAll();
       }
     }
 
-    function selectPreset(preset) {
-      state.selectedPresets[state.currentPhase] = preset;
-      saveState();
-      renderPresets();
-    }
+    function updateTimerUI() {
+      const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+      const secs = String(timerSeconds % 60).padStart(2, '0');
+      document.getElementById('timer-display').textContent = `${mins}:${secs}`;
 
-    function renderPresets() {
-      const container = document.getElementById('phase-presets');
-      const cfg = PHASE_CONFIG[state.currentPhase];
-      const active = state.selectedPresets[state.currentPhase];
+      const isMind = state.currentPhase === 'mind';
+      const ring = document.getElementById('timer-ring');
+      const progress = timerTotal > 0 ? (timerTotal - timerSeconds) / timerTotal : 0;
+      ring.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - progress);
+      ring.style.stroke = isMind ? '#10b981' : '#0ea5e9';
 
-      container.innerHTML = cfg.presets
-        .map(p => {
-          const isSelected = p === active;
-          return `<button
-            onclick="selectPreset('${p}')"
-            class="px-3 py-1.5 rounded-xl text-xs font-medium border transition ${
-              isSelected
-                ? 'bg-slate-100 text-slate-950 border-white font-bold shadow-sm'
-                : 'bg-slate-950/70 text-slate-300 border-slate-800 hover:border-slate-700'
-            }"
-          >${p}</button>`;
-        })
-        .join('');
-    }
+      const phaseLabel = document.getElementById('phase-label');
+      phaseLabel.textContent = isMind ? 'STEP 1 · 餵養心靈' : 'STEP 2 · 喚醒身體';
+      phaseLabel.className = `text-xs font-extrabold uppercase tracking-widest mb-0.5 ${
+        isMind ? 'text-emerald-400' : 'text-sky-400'
+      }`;
 
-    function renderTasks() {
-      const container = document.getElementById('tasks-container');
-      container.innerHTML = state.tasks
-        .map((task, idx) => {
-          const isMIT = idx === 0;
-          return `
-          <div class="group flex items-center gap-2.5 sm:gap-3 p-3 rounded-2xl border transition ${
-            isMIT
-              ? 'bg-gradient-to-r from-amber-500/15 via-slate-900 to-slate-900 border-amber-500/50 shadow-md shadow-amber-950/20'
-              : 'bg-slate-950/70 border-slate-800/90 hover:border-slate-700'
-          }">
-            <button
-              onclick="toggleTaskDone(${idx})"
-              title="標記完成"
-              class="w-6 h-6 rounded-lg border flex items-center justify-center transition shrink-0 ${
-                task.done
-                  ? 'bg-emerald-500 border-emerald-400 text-slate-950 font-bold'
-                  : isMIT
-                  ? 'border-amber-400/70 hover:bg-amber-500/20 text-transparent'
-                  : 'border-slate-700 hover:border-slate-500 text-transparent'
-              }"
-            >
-              ✓
-            </button>
+      const glowBg = document.getElementById('glow-bg');
+      glowBg.className = `absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full blur-3xl transition-colors duration-500 ${
+        isMind ? 'bg-emerald-500/20' : 'bg-sky-500/20'
+      }`;
 
-            <div class="shrink-0">
-              ${
-                isMIT
-                  ? `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-extrabold bg-amber-400 text-slate-950 shadow-sm">
-                      👑 #1 最重要
-                    </span>`
-                  : `<span class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold bg-slate-800 text-slate-400">
-                      #${idx + 1}
-                    </span>`
-              }
-            </div>
+      const btn = document.getElementById('btn-main-timer');
+      const icon = document.getElementById('btn-icon');
+      const label = document.getElementById('btn-label');
+      const status = document.getElementById('timer-status');
 
-            <input
-              type="text"
-              value="${escapeHtml(task.text)}"
-              oninput="updateTaskText(${idx}, this.value)"
-              placeholder="${
-                isMIT
-                  ? '今日唯一最重要、最高價值產出事項...'
-                  : `第 ${idx + 1} 項高價值產出任務...`
-              }"
-              class="w-full bg-transparent text-sm ${
-                task.done ? 'line-through text-slate-500' : 'text-slate-100'
-              } placeholder-slate-500 focus:outline-none font-medium"
-            />
-
-            ${
-              !isMIT
-                ? `<button
-                    onclick="promoteToTop(${idx})"
-                    title="排在首位（設為最重要的一件事）"
-                    class="shrink-0 px-2 py-1 rounded-lg text-[11px] font-semibold bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-300 border border-slate-700 transition"
-                  >
-                    ↑置頂
-                  </button>`
-                : ''
-            }
-          </div>
-        `;
-        })
-        .join('');
-
-      const filledCount = state.tasks.filter(t => t.text.trim().length > 0).length;
-      const doneCount = state.tasks.filter(t => t.done).length;
-      const badgeTasks = document.getElementById('badge-tasks');
-      if (filledCount === 5) {
-        state.phasesDone.tasks = true;
+      if (isRunning) {
+        icon.textContent = '⏸';
+        label.textContent = '暫停 10 分鐘計時';
+        status.textContent = '🔥 專注計時進行中...';
+        btn.className = 'w-full mt-5 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-white bg-rose-600 shadow-lg shadow-rose-600/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2.5';
+      } else {
+        icon.textContent = '▶';
+        const phaseName = isMind ? '餵養心靈' : '喚醒身體';
+        label.textContent = timerSeconds < timerTotal ? `繼續 10 分鐘 (${phaseName})` : `啟動 10 分鐘 · ${phaseName}`;
+        status.textContent = state.phasesDone[state.currentPhase] ? '✅ 此階段今日已完成' : '點擊下方大按鈕開始計時';
+        btn.className = isMind
+          ? 'w-full mt-5 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-300 neon-emerald active:scale-[0.98] transition-all flex items-center justify-center gap-2.5'
+          : 'w-full mt-5 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-slate-950 bg-gradient-to-r from-sky-400 to-cyan-300 neon-sky active:scale-[0.98] transition-all flex items-center justify-center gap-2.5';
       }
-      badgeTasks.textContent = `已填 ${filledCount}/5 · 完成 ${doneCount}/5`;
-      badgeTasks.className =
-        filledCount >= 5
-          ? 'text-xs text-amber-300 font-bold'
-          : 'text-xs text-slate-400 font-medium';
+    }
+
+    function renderTabs() {
+      const isMind = state.currentPhase === 'mind';
+      const tabMind = document.getElementById('tab-mind');
+      const tabBody = document.getElementById('tab-body');
+
+      tabMind.className = isMind
+        ? 'py-3 px-3 rounded-2xl font-black text-sm border-2 border-emerald-400 bg-emerald-500/20 text-white shadow-lg shadow-emerald-500/10 transition-all flex flex-col items-center justify-center gap-0.5'
+        : 'py-3 px-3 rounded-2xl font-bold text-sm border border-slate-800 bg-slate-950/60 text-slate-400 transition-all flex flex-col items-center justify-center gap-0.5';
+
+      tabBody.className = !isMind
+        ? 'py-3 px-3 rounded-2xl font-black text-sm border-2 border-sky-400 bg-sky-500/20 text-white shadow-lg shadow-sky-500/10 transition-all flex flex-col items-center justify-center gap-0.5'
+        : 'py-3 px-3 rounded-2xl font-bold text-sm border border-slate-800 bg-slate-950/60 text-slate-400 transition-all flex flex-col items-center justify-center gap-0.5';
+
+      document.getElementById('check-mind').className = state.phasesDone.mind ? 'inline text-xs' : 'hidden';
+      document.getElementById('check-body').className = state.phasesDone.body ? 'inline text-xs' : 'hidden';
     }
 
     function escapeHtml(str) {
@@ -608,33 +410,85 @@
         .replace(/>/g, '&gt;');
     }
 
+    function renderTasks() {
+      const container = document.getElementById('tasks-container');
+      container.innerHTML = state.tasks
+        .map((task, idx) => {
+          const isMIT = idx === 0;
+          return `
+          <div class="flex items-center gap-2.5 p-3.5 rounded-2xl border-2 transition ${
+            isMIT
+              ? 'bg-amber-500/15 border-amber-400/80 shadow-md'
+              : 'bg-slate-950/90 border-slate-800'
+          }">
+            <button
+              onclick="toggleTaskDone(${idx})"
+              class="w-7 h-7 rounded-xl border-2 flex items-center justify-center transition shrink-0 text-sm font-black ${
+                task.done
+                  ? 'bg-emerald-400 border-emerald-400 text-slate-950'
+                  : isMIT
+                  ? 'border-amber-400 text-transparent'
+                  : 'border-slate-600 text-transparent'
+              }"
+            >
+              ✓
+            </button>
+
+            <span class="shrink-0 text-xs font-black px-2 py-1 rounded-lg ${
+              isMIT ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300'
+            }">
+              ${isMIT ? '👑 #1 最重要' : `#${idx + 1}`}
+            </span>
+
+            <input
+              type="text"
+              value="${escapeHtml(task.text)}"
+              oninput="updateTaskText(${idx}, this.value)"
+              placeholder="${isMIT ? '今日最重要的一件事...' : `第 ${idx + 1} 項高價值任務...`}"
+              class="w-full bg-transparent text-base font-bold ${
+                task.done ? 'line-through text-slate-500' : 'text-white'
+              } placeholder-slate-500 focus:outline-none"
+            />
+
+            ${
+              !isMIT
+                ? `<button
+                    onclick="promoteToTop(${idx})"
+                    class="shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-extrabold bg-slate-800 active:bg-amber-400 active:text-slate-950 text-amber-300 border border-slate-700"
+                  >
+                    ↑置頂
+                  </button>`
+                : ''
+            }
+          </div>
+        `;
+        })
+        .join('');
+
+      const doneCount = state.tasks.filter(t => t.done).length;
+      document.getElementById('tasks-counter').textContent = `${doneCount} / 5 完成`;
+    }
+
     function updateTaskText(idx, val) {
       state.tasks[idx].text = val;
-      const filledCount = state.tasks.filter(t => t.text.trim().length > 0).length;
-      if (filledCount >= 5) {
-        state.phasesDone.tasks = true;
-      }
       saveState();
-      updateHeaderAndProgress();
     }
 
     function toggleTaskDone(idx) {
       state.tasks[idx].done = !state.tasks[idx].done;
       saveState();
       renderTasks();
-      updateHeaderAndProgress();
     }
 
     function promoteToTop(idx) {
-      if (idx <= 0 || idx >= state.tasks.length) return;
+      if (idx <= 0) return;
       const [item] = state.tasks.splice(idx, 1);
       state.tasks.unshift(item);
-      saveState();
+      saveState('👑 已排在首位 (#1 最重要事項)');
       renderTasks();
-      showToast('👑 已將該任務排在首位 (#1 最重要事項)');
     }
 
-    function clearCompletedOrResetTasks() {
+    function resetTasks() {
       state.tasks = [
         { text: '', done: false },
         { text: '', done: false },
@@ -642,133 +496,41 @@
         { text: '', done: false },
         { text: '', done: false }
       ];
-      state.phasesDone.tasks = false;
-      saveState();
-      renderAll();
-      showToast('已重置今日 Top 5 任務清單');
-    }
-
-    function updateHeaderAndProgress() {
-      document.getElementById('streak-count').textContent = state.streak;
-      document.getElementById('today-date').textContent = state.date;
-
-      const badgeMind = document.getElementById('badge-mind');
-      badgeMind.textContent = state.phasesDone.mind ? '✓ 已完成' : '未完成';
-      badgeMind.className = state.phasesDone.mind ? 'text-xs text-emerald-400 font-bold' : 'text-xs text-slate-400 font-medium';
-
-      const badgeBody = document.getElementById('badge-body');
-      badgeBody.textContent = state.phasesDone.body ? '✓ 已完成' : '未完成';
-      badgeBody.className = state.phasesDone.body ? 'text-xs text-sky-400 font-bold' : 'text-xs text-slate-400 font-medium';
-
-      const filledCount = state.tasks.filter(t => t.text.trim().length > 0).length;
-      const doneCount = state.tasks.filter(t => t.done).length;
-      const badgeTasks = document.getElementById('badge-tasks');
-      badgeTasks.textContent = `已填 ${filledCount}/5 · 完成 ${doneCount}/5`;
-
-      const completedPhases =
-        (state.phasesDone.mind ? 1 : 0) +
-        (state.phasesDone.body ? 1 : 0) +
-        (state.phasesDone.tasks || filledCount > 0 ? 1 : 0);
-
-      document.getElementById('overall-progress-text').textContent =
-        `已完成 ${completedPhases} / 3 個核心環節（Top 5 已填寫 ${filledCount} 項）`;
+      saveState('已清空今日任務');
+      renderTasks();
     }
 
     function finishMorningRoutine() {
       const today = getTodayStr();
       state.phasesDone.mind = true;
       state.phasesDone.body = true;
-      state.phasesDone.tasks = true;
-
       if (state.lastCheckInDate !== today) {
         state.streak = (state.streak || 0) + 1;
         state.lastCheckInDate = today;
       }
-
-      const mit = state.tasks[0]?.text?.trim() || '已完成晨間心靈與身體啟動';
-      state.history = [
-        {
-          date: today,
-          mit: mit,
-          mind: state.selectedPresets.mind,
-          body: state.selectedPresets.body
-        },
-        ...state.history.filter(h => h.date !== today)
-      ].slice(0, 8);
-
       playChime();
-      saveState();
+      saveState('🏆 今日晨間啟動打卡成功！');
       renderAll();
-      showToast('🏆 恭喜完成今日冠軍晨間啟動打卡！');
     }
 
     function exportDailySummary() {
       const lines = [
-        `【🏆 冠軍晨間啟動宣言 — ${state.date}】`,
-        `🧘 心靈成長 (10m)：${state.selectedPresets.mind}${state.morningNote ? `｜啟發：${state.morningNote}` : ''}`,
-        `⚡ 喚醒身體 (10m)：${state.selectedPresets.body}`,
-        `🎯 今日 Top 5 高價值產出任務：`,
-        ...state.tasks.map((t, i) => `  ${i === 0 ? '👑 #1 [最重要]' : `   #${i + 1}`} ${t.text || '(未填寫)'} ${t.done ? '✅' : ''}`)
+        `🏆 【冠軍晨間習慣 — ${state.date}】`,
+        `🧘 10m 餵養心靈：${state.phasesDone.mind ? '✅ 已完成' : '⬜'}`,
+        `⚡ 10m 喚醒身體：${state.phasesDone.body ? '✅ 已完成' : '⬜'}`,
+        `🎯 今日 Top 5 高價值任務：`,
+        ...state.tasks.map((t, i) => `${i === 0 ? '👑 #1 [最重要]' : `   #${i + 1}`} ${t.text || '(未填寫)'} ${t.done ? '✅' : ''}`)
       ];
       navigator.clipboard.writeText(lines.join('\n')).then(() => {
-        showToast('📋 已複製今日晨間宣言至剪貼簿！');
+        showToast('📋 已複製今日清單！可直接貼到 LINE');
       });
-    }
-
-    function renderHistory() {
-      const list = document.getElementById('history-list');
-      if (!state.history || state.history.length === 0) {
-        list.innerHTML = `<div class="col-span-full text-slate-500 py-2">尚無打卡紀錄，完成上方 3 個步驟後點擊「完成今日晨間啟動打卡」即可累積連續天數！</div>`;
-        return;
-      }
-      list.innerHTML = state.history
-        .map(
-          item => `
-        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800/90 flex flex-col justify-between gap-1.5">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-emerald-400">${escapeHtml(item.date)}</span>
-            <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">✓ 已啟動</span>
-          </div>
-          <div class="text-slate-200 font-semibold truncate" title="${escapeHtml(item.mit)}">
-            👑 #1：${escapeHtml(item.mit)}
-          </div>
-          <div class="text-[11px] text-slate-400 truncate">
-            ${escapeHtml(item.mind)} · ${escapeHtml(item.body)}
-          </div>
-        </div>
-      `
-        )
-        .join('');
     }
 
     function renderAll() {
-      const cfg = PHASE_CONFIG[state.currentPhase];
-      document.getElementById('current-phase-tag').textContent = cfg.tag;
-      document.getElementById('timer-title').textContent = cfg.title;
-      document.getElementById('timer-subtitle').textContent = cfg.subtitle;
-
-      const btnStart = document.getElementById('btn-start-pause');
-      btnStart.className = `col-span-2 py-3 px-4 rounded-xl font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 ${cfg.btnClass}`;
-
-      ['mind', 'body', 'tasks'].forEach(p => {
-        const tab = document.getElementById(`tab-${p}`);
-        if (p === state.currentPhase) {
-          tab.className = 'group text-left p-4 rounded-2xl border transition-all duration-200 bg-slate-900 border-emerald-400/60 shadow-lg';
-        } else {
-          tab.className = 'group text-left p-4 rounded-2xl border transition-all duration-200 bg-slate-900/50 border-slate-800/80 hover:border-slate-700';
-        }
-      });
-
-      const noteEl = document.getElementById('morning-note');
-      if (noteEl && noteEl.value !== state.morningNote) {
-        noteEl.value = state.morningNote;
-      }
-
-      renderPresets();
-      renderTasks();
+      document.getElementById('streak-count').textContent = state.streak;
+      renderTabs();
       updateTimerUI();
-      updateHeaderAndProgress();
-      renderHistory();
+      renderTasks();
     }
 
     loadState();
