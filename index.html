@@ -27,6 +27,13 @@
     .neon-amber {
       box-shadow: 0 0 25px rgba(245, 158, 11, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
     }
+    @keyframes eq-bar {
+      0%, 100% { transform: scaleY(0.3); }
+      50% { transform: scaleY(1); }
+    }
+    .eq-anim-1 { animation: eq-bar 0.7s ease-in-out infinite; }
+    .eq-anim-2 { animation: eq-bar 0.45s ease-in-out infinite 0.15s; }
+    .eq-anim-3 { animation: eq-bar 0.8s ease-in-out infinite 0.3s; }
   </style>
 </head>
 <body class="bg-slate-950 text-white antialiased min-h-screen pb-14 selection:bg-emerald-500/30">
@@ -115,11 +122,36 @@
         </div>
       </div>
 
+      <!-- Built-in Music Selector Bar (Auto-switches between Mind & Body!) -->
+      <div class="w-full mt-4 bg-slate-950/90 border border-slate-800 rounded-2xl p-2.5 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 pl-1">
+          <!-- Animated Equalizer Icon -->
+          <div id="music-eq" class="flex items-end gap-0.5 h-3.5 w-4 opacity-40">
+            <span id="eq-1" class="w-1 h-full bg-emerald-400 rounded-full"></span>
+            <span id="eq-2" class="w-1 h-full bg-emerald-400 rounded-full"></span>
+            <span id="eq-3" class="w-1 h-full bg-emerald-400 rounded-full"></span>
+          </div>
+          <span id="music-bar-title" class="text-xs font-extrabold text-slate-200">🎵 冥想音樂</span>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button onclick="setMusicStyle('style1')" id="music-style1" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition">
+            🥣 頌缽空靈
+          </button>
+          <button onclick="setMusicStyle('style2')" id="music-style2" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition">
+            🌊 森林海浪
+          </button>
+          <button onclick="setMusicStyle('off')" id="music-off" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition">
+            🔇 靜音
+          </button>
+        </div>
+      </div>
+
       <!-- GIANT GLOWING 10-MINUTE START BUTTON -->
       <button
         id="btn-main-timer"
         onclick="toggleTimer()"
-        class="w-full mt-5 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-300 neon-emerald active:scale-[0.98] transition-all flex items-center justify-center gap-2.5"
+        class="w-full mt-4 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-300 neon-emerald active:scale-[0.98] transition-all flex items-center justify-center gap-2.5"
       >
         <span id="btn-icon" class="text-xl">▶</span>
         <span id="btn-label">啟動 10 分鐘倒數</span>
@@ -142,7 +174,7 @@
       </div>
     </section>
 
-    <!-- 3. Daily Top 5 Tasks (Clear, Large Font, High Readability) -->
+    <!-- 3. Daily Top 5 Tasks -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl">
       <div class="flex items-center justify-between mb-1">
         <h2 class="text-lg font-black text-white flex items-center gap-2">
@@ -205,6 +237,7 @@
     let state = {
       date: getTodayStr(),
       currentPhase: 'mind',
+      musicStyle: 'style1', // 'style1' | 'style2' | 'off'
       phasesDone: { mind: false, body: false },
       tasks: [
         { text: '', done: false },
@@ -222,6 +255,352 @@
     let timerInterval = null;
     let isRunning = false;
 
+    // --- Web Audio API Sound Engine (Mind Meditation + Body Upbeat Groove) ---
+    let audioCtx = null;
+    let ambientNodes = [];
+    let loopTimers = [];
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function stopAmbientSound() {
+      loopTimers.forEach(t => clearInterval(t));
+      loopTimers = [];
+      ambientNodes.forEach(node => {
+        try {
+          if (node.stop) node.stop();
+          if (node.disconnect) node.disconnect();
+        } catch (e) {}
+      });
+      ambientNodes = [];
+      updateEqVisual(false);
+    }
+
+    function startAmbientSound() {
+      stopAmbientSound();
+      if (state.musicStyle === 'off' || !isRunning) return;
+
+      const ctx = getAudioCtx();
+      updateEqVisual(true);
+
+      if (state.currentPhase === 'mind') {
+        // === MIND PHASE: Calm Meditation Audio ===
+        if (state.musicStyle === 'style1') {
+          // 432Hz Tibetan Singing Bowl + Warm Pad
+          const masterGain = ctx.createGain();
+          masterGain.gain.setValueAtTime(0.01, ctx.currentTime);
+          masterGain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 2.0);
+          masterGain.connect(ctx.destination);
+          ambientNodes.push(masterGain);
+
+          [108, 162, 216, 270].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const oscGain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+            const lfo = ctx.createOscillator();
+            const lfoGain = ctx.createGain();
+            lfo.frequency.setValueAtTime(0.12 + idx * 0.03, ctx.currentTime);
+            lfoGain.gain.setValueAtTime(0.04, ctx.currentTime);
+            lfo.connect(lfoGain);
+            lfoGain.connect(oscGain.gain);
+
+            oscGain.gain.setValueAtTime(idx === 0 ? 0.28 : 0.14, ctx.currentTime);
+            osc.connect(oscGain);
+            oscGain.connect(masterGain);
+
+            osc.start();
+            lfo.start();
+            ambientNodes.push(osc, lfo, oscGain, lfoGain);
+          });
+
+          strikeSingingBowl();
+          const t = setInterval(() => {
+            if (isRunning && state.currentPhase === 'mind' && state.musicStyle === 'style1') {
+              strikeSingingBowl();
+            }
+          }, 11000);
+          loopTimers.push(t);
+
+        } else {
+          // Soothing Ocean Waves
+          const bufferSize = 2 * ctx.sampleRate;
+          const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          let lastOut = 0.0;
+          for (let i = 0; i < bufferSize; i++) {
+            const white = Math.random() * 2 - 1;
+            output[i] = (lastOut + 0.02 * white) / 1.02;
+            lastOut = output[i];
+            output[i] *= 0.25;
+          }
+
+          const whiteNoise = ctx.createBufferSource();
+          whiteNoise.buffer = noiseBuffer;
+          whiteNoise.loop = true;
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(320, ctx.currentTime);
+
+          const waveLfo = ctx.createOscillator();
+          const waveLfoGain = ctx.createGain();
+          waveLfo.frequency.setValueAtTime(0.14, ctx.currentTime);
+          waveLfoGain.gain.setValueAtTime(220, ctx.currentTime);
+          waveLfo.connect(waveLfoGain);
+          waveLfoGain.connect(filter.frequency);
+
+          const waveGain = ctx.createGain();
+          waveGain.gain.setValueAtTime(0.01, ctx.currentTime);
+          waveGain.gain.linearRampToValueAtTime(0.32, ctx.currentTime + 1.8);
+
+          whiteNoise.connect(filter);
+          filter.connect(waveGain);
+          waveGain.connect(ctx.destination);
+
+          whiteNoise.start();
+          waveLfo.start();
+          ambientNodes.push(whiteNoise, waveLfo, filter, waveGain);
+        }
+
+      } else {
+        // === BODY PHASE: Upbeat Energetic Workout Rhythm ===
+        if (state.musicStyle === 'style1') {
+          // Upbeat 124 BPM Tropical / Synth Pop Workout Groove
+          let step = 0;
+          // Uplifting major chord arpeggio notes (C4, E4, G4, A4, C5, G4, E4, D4)
+          const melody = [261.63, 329.63, 392.00, 440.00, 523.25, 392.00, 329.63, 293.66];
+          const bassline = [130.81, 130.81, 110.00, 110.00, 174.61, 174.61, 196.00, 196.00];
+
+          const playStep = () => {
+            if (!isRunning || state.currentPhase !== 'body' || state.musicStyle !== 'style1') return;
+            const now = ctx.currentTime;
+
+            // Four-on-the-floor Kick on steps 0, 2, 4, 6
+            if (step % 2 === 0) {
+              playKick(now, 0.25);
+            } else {
+              // Crisp off-beat hi-hat on 1, 3, 5, 7
+              playHiHat(now, 0.07);
+            }
+
+            // Bouncy synth pluck melody on every eighth note
+            const noteFreq = melody[step % melody.length];
+            playPluck(now, noteFreq, 0.11, 0.18);
+
+            // Warm bass pulse on 0, 2, 4, 6
+            if (step % 2 === 0) {
+              const bassFreq = bassline[Math.floor(step / 2) % bassline.length];
+              playPluck(now, bassFreq, 0.14, 0.22, 'triangle');
+            }
+
+            step++;
+          };
+
+          playStep();
+          // 124 BPM eighth notes (~240ms per 8th note)
+          const t = setInterval(playStep, 240);
+          loopTimers.push(t);
+
+        } else {
+          // Style 2: Sunny Lofi / Brisk Stretch Beat (105 BPM)
+          let step = 0;
+          const chords = [
+            [261.63, 329.63, 392.00, 493.88], // Cmaj7
+            [220.00, 261.63, 329.63, 392.00], // Am7
+            [174.61, 220.00, 261.63, 349.23], // Fmaj7
+            [196.00, 246.94, 293.66, 392.00]  // G7
+          ];
+
+          const playStretchStep = () => {
+            if (!isRunning || state.currentPhase !== 'body' || state.musicStyle !== 'style2') return;
+            const now = ctx.currentTime;
+
+            if (step % 4 === 0) {
+              playKick(now, 0.2);
+              const chord = chords[Math.floor(step / 4) % chords.length];
+              chord.forEach(freq => playPluck(now, freq, 0.045, 0.65, 'sine'));
+            }
+            if (step % 2 === 1) {
+              playHiHat(now, 0.05);
+            }
+            if (step % 4 === 2) {
+              const chord = chords[Math.floor(step / 4) % chords.length];
+              playPluck(now, chord[2] * 2, 0.06, 0.2, 'triangle');
+            }
+            step++;
+          };
+
+          playStretchStep();
+          const t = setInterval(playStretchStep, 285);
+          loopTimers.push(t);
+        }
+      }
+    }
+
+    function playKick(time, volume = 0.25) {
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(135, time);
+        osc.frequency.exponentialRampToValueAtTime(42, time + 0.12);
+        gain.gain.setValueAtTime(volume, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(time);
+        osc.stop(time + 0.17);
+      } catch (e) {}
+    }
+
+    function playHiHat(time, volume = 0.06) {
+      try {
+        const ctx = getAudioCtx();
+        const bufferSize = ctx.sampleRate * 0.05;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(6000, time);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(volume, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.045);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        noise.start(time);
+      } catch (e) {}
+    }
+
+    function playPluck(time, freq, volume = 0.1, duration = 0.2, type = 'sine') {
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, time);
+        gain.gain.setValueAtTime(0.001, time);
+        gain.gain.linearRampToValueAtTime(volume, time + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0008, time + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(time);
+        osc.stop(time + duration + 0.02);
+      } catch (e) {}
+    }
+
+    function strikeSingingBowl() {
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        [432, 864, 1296].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+          const peak = i === 0 ? 0.14 : i === 1 ? 0.05 : 0.02;
+          const duration = i === 0 ? 7.0 : 4.0;
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(peak, now + 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        });
+      } catch (e) {}
+    }
+
+    function updateEqVisual(playing) {
+      const eq = document.getElementById('music-eq');
+      if (!eq) return;
+      const bars = eq.querySelectorAll('span');
+      const isMind = state.currentPhase === 'mind';
+      bars.forEach(b => {
+        b.className = `w-1 h-full rounded-full ${isMind ? 'bg-emerald-400' : 'bg-sky-400'}`;
+      });
+      if (playing && state.musicStyle !== 'off') {
+        eq.classList.remove('opacity-40');
+        eq.classList.add('opacity-100');
+        bars[0].classList.add('eq-anim-1');
+        bars[1].classList.add('eq-anim-2');
+        bars[2].classList.add('eq-anim-3');
+      } else {
+        eq.classList.add('opacity-40');
+        eq.classList.remove('opacity-100');
+      }
+    }
+
+    function setMusicStyle(style) {
+      state.musicStyle = style;
+      const isMind = state.currentPhase === 'mind';
+      let msg = '🔇 已切換為：靜音';
+      if (style === 'style1') {
+        msg = isMind ? '🥣 已切換為：頌缽空靈冥想音' : '⚡ 已切換為：輕快動感節奏';
+      } else if (style === 'style2') {
+        msg = isMind ? '🌊 已切換為：森林海浪自然音' : '☀️ 已切換為：陽光律動伸展音';
+      }
+      saveState(msg);
+      renderMusicButtons();
+
+      if (isRunning) {
+        startAmbientSound();
+      } else if (style !== 'off') {
+        // Short preview sound on tap
+        const ctx = getAudioCtx();
+        if (isMind) {
+          strikeSingingBowl();
+        } else {
+          playKick(ctx.currentTime, 0.22);
+          playPluck(ctx.currentTime, 392.0, 0.12, 0.2);
+          playPluck(ctx.currentTime + 0.15, 523.25, 0.12, 0.25);
+        }
+      }
+    }
+
+    function renderMusicButtons() {
+      const isMind = state.currentPhase === 'mind';
+      const titleEl = document.getElementById('music-bar-title');
+      const btn1 = document.getElementById('music-style1');
+      const btn2 = document.getElementById('music-style2');
+      const btnOff = document.getElementById('music-off');
+
+      if (isMind) {
+        titleEl.textContent = '🎵 冥想音樂';
+        btn1.textContent = '🥣 頌缽空靈';
+        btn2.textContent = '🌊 森林海浪';
+      } else {
+        titleEl.textContent = '🎵 運動音樂';
+        btn1.textContent = '⚡ 輕快動感';
+        btn2.textContent = '☀️ 陽光伸展';
+      }
+
+      const activeColor = isMind ? 'bg-emerald-400 text-slate-950 shadow-sm' : 'bg-sky-400 text-slate-950 shadow-sm';
+      const inactiveClass = 'px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 bg-slate-900 hover:text-slate-200 transition';
+
+      btn1.className = state.musicStyle === 'style1' ? `px-2.5 py-1.5 rounded-xl text-xs font-black transition ${activeColor}` : inactiveClass;
+      btn2.className = state.musicStyle === 'style2' ? `px-2.5 py-1.5 rounded-xl text-xs font-black transition ${activeColor}` : inactiveClass;
+      btnOff.className = state.musicStyle === 'off' ? 'px-2.5 py-1.5 rounded-xl text-xs font-black transition bg-slate-700 text-white' : inactiveClass;
+    }
+
     function getTodayStr() {
       const now = new Date();
       const y = now.getFullYear();
@@ -238,6 +617,7 @@
           const today = getTodayStr();
           state.streak = parsed.streak || 0;
           state.lastCheckInDate = parsed.lastCheckInDate || null;
+          if (parsed.musicStyle) state.musicStyle = parsed.musicStyle;
 
           if (parsed.date === today) {
             state.phasesDone = parsed.phasesDone || { mind: false, body: false };
@@ -272,7 +652,7 @@
 
     function playChime() {
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = getAudioCtx();
         [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -301,6 +681,7 @@
         pauseTimer();
       } else {
         isRunning = true;
+        startAmbientSound();
         updateTimerUI();
         timerInterval = setInterval(() => {
           if (timerSeconds > 0) {
@@ -315,6 +696,7 @@
 
     function pauseTimer() {
       isRunning = false;
+      stopAmbientSound();
       if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -372,16 +754,18 @@
       if (isRunning) {
         icon.textContent = '⏸';
         label.textContent = '暫停 10 分鐘計時';
-        status.textContent = '🔥 專注計時進行中...';
-        btn.className = 'w-full mt-5 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-white bg-rose-600 shadow-lg shadow-rose-600/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2.5';
+        status.textContent = state.musicStyle !== 'off'
+          ? (isMind ? '🎵 冥想背景音播放中...' : '🎵 輕快運動節奏播放中...')
+          : '🔥 專注計時進行中...';
+        btn.className = 'w-full mt-4 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-white bg-rose-600 shadow-lg shadow-rose-600/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2.5';
       } else {
         icon.textContent = '▶';
         const phaseName = isMind ? '餵養心靈' : '喚醒身體';
         label.textContent = timerSeconds < timerTotal ? `繼續 10 分鐘 (${phaseName})` : `啟動 10 分鐘 · ${phaseName}`;
         status.textContent = state.phasesDone[state.currentPhase] ? '✅ 此階段今日已完成' : '點擊下方大按鈕開始計時';
         btn.className = isMind
-          ? 'w-full mt-5 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-300 neon-emerald active:scale-[0.98] transition-all flex items-center justify-center gap-2.5'
-          : 'w-full mt-5 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-slate-950 bg-gradient-to-r from-sky-400 to-cyan-300 neon-sky active:scale-[0.98] transition-all flex items-center justify-center gap-2.5';
+          ? 'w-full mt-4 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-300 neon-emerald active:scale-[0.98] transition-all flex items-center justify-center gap-2.5'
+          : 'w-full mt-4 py-4 px-6 rounded-2xl font-black text-lg tracking-wide text-slate-950 bg-gradient-to-r from-sky-400 to-cyan-300 neon-sky active:scale-[0.98] transition-all flex items-center justify-center gap-2.5';
       }
     }
 
@@ -529,6 +913,7 @@
     function renderAll() {
       document.getElementById('streak-count').textContent = state.streak;
       renderTabs();
+      renderMusicButtons();
       updateTimerUI();
       renderTasks();
     }
